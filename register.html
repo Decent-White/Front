@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: url(Desert.jpg) no-repeat 0px 0px;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            -moz-background-size: 100% 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        #loginDiv {
+            width: 37%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 650px;
+            background-color: rgba(75, 81, 95, 0.3);
+            box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
+            border-radius: 5px;
+        }
+
+        #name_trip {
+            margin-left: 50px;
+            color: red;
+        }
+
+        p,
+        .sexDiv {
+            margin-top: 10px;
+            margin-left: 20px;
+            color: azure;
+        }
+
+        .sexDiv>input,
+        .hobby>input {
+            width: 30px;
+            height: 17px;
+        }
+
+        input,
+        select {
+            margin-left: 15px;
+            border-radius: 5px;
+            border-style: hidden;
+            height: 30px;
+            width: 140px;
+            background-color: rgba(216, 191, 216, 0.5);
+            outline: none;
+            color: #f0edf3;
+            padding-left: 10px;
+        }
+
+        .button {
+            border-color: cornsilk;
+            background-color: rgba(100, 149, 237, .7);
+            color: aliceblue;
+            border-style: hidden;
+            border-radius: 5px;
+            width: 100px;
+            height: 31px;
+            font-size: 16px;
+        }
+
+        .introduce {
+            margin-left: 110px;
+        }
+
+        .introduce>textarea {
+            background-color: rgba(216, 191, 216, 0.5);
+            border-style: hidden;
+            outline: none;
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            color: #f0edf3;
+        }
+
+        b {
+            margin-left: 50px;
+            color: #FFEB3B;
+            font-size: 10px;
+            font-weight: initial;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loginDiv">
+        <form action="">
+            <h1>INFORMATION STATISTICS</h1>
+            <!-- 用户信息收集部分 -->
+            <p>用户姓名:<input id="userName" type="text" autofocus required><label id="name_trip"></label></p>
+            <p>性别:<input id="gender" type="text" pattern="男|女" placeholder="请输入男或女" required><label id="gender_trip"></label></p>
+            <p>年龄:<input id="age" type="number" required><label id="age_trip"></label></p>
+            <p>身高 (cm):<input id="height" type="number" required><label id="height_trip"></label></p>
+            <p>体重 (kg):<input id="weight" type="number" required><label id="weight_trip"></label></p>
+
+            <!-- 用户信息处理和提交部分 -->
+            <p style="text-align: center;">
+                <input type="submit" class="button" onblur="checkForm()" onclick="return submitT()" value="提交">
+                <input type="reset" class="button" value="重置">
+            </p>
+        </form>
+    </div>
+</body>
+
+<script type="text/javascript">
+    // 函数用于在页面上显示提示信息
+    function trip(obj, trip) {
+        document.getElementById(obj).innerHTML = "<b>" + trip + "</b>";
+    }
+
+    // 校验整个表单的合法性
+    function checkForm() {
+        // 获取用户名输入项
+        var userName = document.getElementById("userName");
+        var uName = userName.value;
+        if (uName.length < 1 || uName.length > 10) {
+            trip("name_trip", "账号长度为1-10位!!");
+            return false;
+        } else {
+            trip("name_trip", "OK!!");
+        }
+
+        // 校验性别
+        var genderInput = document.getElementById("gender");
+        var userGender = genderInput.value;
+        if (!/^男$|^女$/u.test(userGender)) {
+            trip("gender_trip", "性别只能填写'男'或'女'!!");
+            return false;
+        } else {
+            trip("gender_trip", "OK!!");
+        }
+
+        // 校验年龄
+        var ageInput = document.getElementById("age");
+        var userAge = ageInput.value;
+        if (userAge < 1 || userAge > 150) {
+            trip("age_trip", "年龄范围为1-150岁!!");
+            return false;
+        } else {
+            trip("age_trip", "OK!!");
+        }
+
+        // 校验身高
+        var heightInput = document.getElementById("height");
+        var userHeight = heightInput.value;
+        if (userHeight < 50 || userHeight > 300) {
+            trip("height_trip", "身高范围为50-300cm!!");
+            return false;
+        } else {
+            trip("height_trip", "OK!!");
+        }
+
+        // 校验体重
+        var weightInput = document.getElementById("weight");
+        var userWeight = weightInput.value;
+        if (userWeight < 1 || userWeight > 500) {
+            trip("weight_trip", "体重范围为1-500kg!!");
+            return false;
+        } else {
+            trip("weight_trip", "OK!!");
+        }
+
+        return true;
+    }
+
+    // 提交表单前再次校验，如果通过则返回true，否则返回false
+    function submitT() {
+        if (checkForm()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+
+</html>

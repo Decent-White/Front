@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 设置页面编码和标题 -->
+    <meta charset="utf-8" />
+    <title>心率</title>
+
+    <!-- 引入 ECharts 和 Axios 的 JavaScript 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- 设置页面样式 -->
+    <style>
+        h1 {
+            font-family: '宋体';
+            text-align: center;
+        }
+
+        h3 {
+            font-family: '宋体';
+        }
+
+        .high {
+            float: right;
+        }
+
+        .low {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 页面主体部分 -->
+    <h1>实时心率</h1>
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <h3>最高心率</h3>
+    <div class='high' style="width: 600px;height:30px;"></div>
+    <h3>最低心率</h3>
+    <div class='low' style="width: 600px;height:30px;"></div>
+</body>
+
+<script>
+    // 使用 ECharts 初始化图表
+    var myChart = echarts.init(document.getElementById('main'));
+
+    // ECharts 图表的配置选项
+    var option = {
+        title: {
+            left: 'center',
+            text: '24小时心率'
+        },
+        grid: {
+            left: '10%',
+            right: '20%',
+            bottom: '10%'
+        },
+        xAxis: {
+            type: 'time',
+            name: '时间',
+        },
+        yAxis: {
+            name: '心率(次/min)',
+        },
+        visualMap: {
+            top: 50,
+            right: 10,
+            pieces: [
+                {
+                    gt: 0,
+                    lte: 30,
+                    color: '#FD0100'
+                },
+                {
+                    gt: 30,
+                    lte: 60,
+                    color: '#FC7D02'
+                },
+                {
+                    gt: 60,
+                    lte: 100,
+                    color: '#93CE07'
+                },
+                {
+                    gt: 100,
+                    lte: 150,
+                    color: '#FBDB0F'
+                },
+                {
+                    gt: 150,
+                    color: '#AC3B2A'
+                }
+            ],
+            outOfRange: {
+                color: '#999'
+            }
+        },
+        series: [
+            {
+                type: 'line',
+                data: [],  // 初始数据为空数组
+                global: false, // 缺省为 false
+                smooth: true,
+                itemStyle: {
+                    color: 'rgb(255, 70, 131)'
+                },
+            },
+            // 新增玫瑰图配置
+            {
+                type: 'pie',
+                roseType: 'area',
+                data: [
+                    {
+                        value: 100,
+                        name: 'A'
+                    },
+                    {
+                        value: 200,
+                        name: 'B'
+                    },
+                    {
+                        value: 300,
+                        name: 'C'
+                    },
+                    {
+                        value: 400,
+                        name: 'D'
+                    },
+                    {
+                        value: 500,
+                        name: 'E'
+                    }
+                ],
+            }
+        ]
+    };
+
+    // 输出 axios 对象到控制台
+    console.log(axios);
+
+    // 使用 Axios 发送 GET 请求获取心率数据
+    axios.get('http://c4.veypi.com:8888/read').then(response => {
+        const data = response.data;
+
+        // 将获取到的心率数据添加到 ECharts 图表配置中
+        for (var i = 0; i < data.length; i++) {
+            var a = data[i][0];
+            var b = data[i][1];
+            option.series[0].data.push([a, b]);
+
+            // 将心率数据按长度为10的区间进行分类，用于更新玫瑰图数据
+            var interval = Math.floor(b / 10) * 10;
+            for (var j = 0; j < option.series[1].data.length; j++) {
+                if (option.series[1].data[j].name == interval.toString()) {
+                    option.series[1].data[j].value++;
+                    break;
+                }
+            }
+        }
+
+        // 设置图表的配置选项
+        myChart.setOption(option);
+
+        // 启动定时器，每0.5秒更新图表数据并添加动画效果
+        setInterval(() => {
+            myChart.setOption({
+                series: [
+                    {
+                        data: makeRandomData(),
+                        animation: true, // 启用更新数据的动画效果
+                    }
+                ]
+            });
+        }, 500);
+    });
+
+    // 生成随机数据的函数
+    function makeRandomData() {
+        return [
+            {
+                value: Math.random(),
+                name: 'A'
+            },
+            {
+                value: Math.random(),
+                name: 'B'
+            },
+            {
+                value: Math.random(),
+                name: 'C'
+            }
+        ];
+    }
+</script>
+
+</html>

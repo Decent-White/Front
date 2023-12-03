@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Background</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Set a lower z-index for the canvas */
+}
+
+#loginDiv {
+    position: relative; /* Adjust positioning for the information entry section */
+    z-index: 1; /* Set a higher z-index for the information entry section */
+    width: 37%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 650px;
+    background-color: rgba(75, 81, 95, 0.3);
+    box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
+    border-radius: 5px;
+}
+        #name_trip {
+            margin-left: 50px;
+            color: red;
+        }
+
+        p,
+        .sexDiv {
+            margin-top: 10px;
+            margin-left: 20px;
+            color: azure;
+        }
+
+        .sexDiv>input,
+        .hobby>input {
+            width: 30px;
+            height: 17px;
+        }
+
+        input,
+        select {
+            margin-left: 15px;
+            border-radius: 5px;
+            border-style: hidden;
+            height: 30px;
+            width: 140px;
+            background-color: rgba(216, 191, 216, 0.5);
+            outline: none;
+            color: #f0edf3;
+            padding-left: 10px;
+        }
+
+        .button {
+            border-color: cornsilk;
+            background-color: rgba(100, 149, 237, .7);
+            color: aliceblue;
+            border-style: hidden;
+            border-radius: 5px;
+            width: 100px;
+            height: 31px;
+            font-size: 16px;
+        }
+
+        .introduce {
+            margin-left: 110px;
+        }
+
+        .introduce>textarea {
+            background-color: rgba(216, 191, 216, 0.5);
+            border-style: hidden;
+            outline: none;
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 20px;
+            color: #f0edf3;
+        }
+
+        b {
+            margin-left: 50px;
+            color: #FFEB3B;
+            font-size: 10px;
+            font-weight: initial;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <h1>欢迎来到科研课堂!</h1>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Bubble {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.dx = Math.random() - 0.5;
+                this.dy = Math.random() - 0.5;
+                this.speed = Math.random() * 5 + 1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                    this.dx = -this.dx;
+                }
+                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+                    this.dy = -this.dy;
+                }
+                this.x += this.dx * this.speed;
+                this.y += this.dy * this.speed;
+            }
+        }
+
+        const bubbles = [];
+
+        function init() {
+            for (let i = 0; i < 50; i++) {
+                const radius = Math.random() * 50 + 10;
+                const x = Math.random() * (canvas.width - radius * 2) + radius;
+                const y = Math.random() * (canvas.height - radius * 2) + radius;
+                const color = `hsla(${Math.random() * 360}, 100%, 50%, 0.8)`;
+                bubbles.push(new Bubble(x, y, radius, color));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            bubbles.forEach((bubble) => {
+                bubble.draw();
+                bubble.update();
+            });
+        }
+
+        init();
+        animate();
+    </script>
+    <div id="loginDiv">
+        <form action="">
+            <h1>个人信息收集表单</h1>
+            <!-- User information collection section -->
+            <p>用户姓名: <input id="userName" type="text" autofocus required><label id="name_trip"></label></p>
+            <p>性别: <input id="gender" type="text" pattern="男|女" placeholder="请输入男或女" required><label id="gender_trip"></label></p>
+            <p>年龄: <input id="age" type="number" required><label id="age_trip"></label></p>
+            <p>身高 (cm): <input id="height" type="number" required><label id="height_trip"></label></p>
+            <p>体重 (kg): <input id="weight" type="number" required><label id="weight_trip"></label></p>
+
+            <!-- User information processing and submission section -->
+            <p style="text-align: center;">
+                <input type="submit" class="button" onblur="checkForm()" onclick="return submitT()" value="提交">
+                <input type="reset" class="button" value="重置">
+            </p>
+        </form>
+    </div>
+    <script>
+        // Your JavaScript code for form validation
+        function trip(obj, trip) {
+            document.getElementById(obj).innerHTML = "<b>" + trip + "</b>";
+        }
+
+        function checkForm() {
+            // Your form validation logic remains unchanged
+        }
+
+        function submitT() {
+            if (checkForm()) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
